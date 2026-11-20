@@ -34,12 +34,14 @@ import 'package:fluffychat/pages/settings_password/settings_password.dart';
 import 'package:fluffychat/pages/settings_security/settings_security.dart';
 import 'package:fluffychat/pages/settings_style/settings_style.dart';
 import 'package:fluffychat/pages/sign_in/sign_in_page.dart';
+import 'package:fluffychat/pages/signup_preview/signup_preview.dart';
 import 'package:fluffychat/widgets/config_viewer.dart';
 import 'package:fluffychat/widgets/layouts/empty_page.dart';
 import 'package:fluffychat/widgets/layouts/two_column_layout.dart';
 import 'package:fluffychat/widgets/log_view.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
@@ -67,8 +69,18 @@ abstract class AppRoutes {
       redirect: (context, state) =>
           Matrix.of(context).widget.clients.any((client) => client.isLogged())
           ? '/rooms'
-          : '/home',
+          : kDebugMode ? '/signup-preview' : '/home',
     ),
+    if (kDebugMode)
+      GoRoute(
+        path: '/signup-preview',
+        redirect: loggedInRedirect,
+        pageBuilder: (context, state) => defaultPageBuilder(
+          context,
+          state,
+          SignupPreview(onTestSignIn: () => context.go('/home')),
+        ),
+      ),
     GoRoute(
       path: '/home',
       pageBuilder: (context, state) =>
