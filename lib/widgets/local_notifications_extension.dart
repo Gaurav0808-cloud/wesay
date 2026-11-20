@@ -27,6 +27,7 @@ extension LocalNotificationsExtension on MatrixState {
 
   Future<void> showLocalNotification(Event event) async {
     await event.room.client.accountDataLoading;
+    if (!mounted) return;
     if (event.room.client.isKnockRequest(event.room)) return;
     if (event.type == RtcNotificationContent.eventType &&
         event.tryParseRtcNotificationContent()?.notificationType == .ring) {

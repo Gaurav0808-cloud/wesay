@@ -129,10 +129,12 @@ class _KnockRequestPageState extends State<KnockRequestPage> {
       if (!mounted) return;
       context.go(open ? '/rooms/${widget.room.id}' : '/rooms/requests');
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(
-          () => _error = 'Could not complete this action. Check your connection and try again.',
+          () => _error =
+              'Could not complete this action. Check your connection and try again.',
         );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -35,3 +35,9 @@ Matrix protocol `knock` is a separate room-join-request mechanism; no new encryp
 - [Matrix account data](https://spec.matrix.org/latest/client-server-api/#client-config)
 - [Matrix room membership](https://spec.matrix.org/latest/client-server-api/#room-membership)
 - [Current Synapse spam-checker callbacks for future server enforcement](https://element-hq.github.io/synapse/latest/modules/spam_checker_callbacks.html)
+
+## Connection handling follow-up
+
+The next revision performs pre-login discovery in an isolated, unauthenticated Matrix SDK client, limits the network check to 20 seconds, closes its dedicated HTTP transport on timeout/cancel, and ignores results from cancelled/disposed sign-in screens. It preserves standard well-known delegation and only copies a successful current result to the actual login client. The underlying SDK and encryption are unchanged. An offline laptop/server still cannot receive messages: this improves feedback, not server availability.
+
+PR updates now run strict analysis and all focused tests without generating repeated 200 MB APK artifacts. Main-branch/manual builds retain APK output. The already downloaded Knock APK predates these connection-handling changes.

@@ -49,12 +49,8 @@ class KnockTestRoom extends Room {
   int leaves = 0;
   bool failJoin = false;
 
-  KnockTestRoom(Client client, {Membership membership = Membership.invite})
-    : super(
-        id: '!request:test.invalid',
-        client: client,
-        membership: membership,
-      ) {
+  KnockTestRoom(Client client, {super.membership = Membership.invite})
+    : super(id: '!request:test.invalid', client: client) {
     setState(
       StrippedStateEvent.fromJson({
         'type': EventTypes.RoomMember,
@@ -108,19 +104,22 @@ void main() {
     },
   );
 
-  test('synced account data enables protection; a claimed direct flag grants no trust', () {
-    final client = KnockTestClient('@alice:test.invalid');
-    client.accountData[KnockAccount.eventType] = BasicEvent(
-      type: KnockAccount.eventType,
-      content: {'enabled': true, 'version': 1},
-    );
-    final room = KnockTestRoom(client);
-    expect(room.isDirectChat, isTrue);
-    expect(client.isKnockRequest(room), isTrue);
-    room.states
-        .clear(); // Group/space or unknown invite metadata is still gated.
-    expect(client.isKnockRequest(room), isTrue);
-  });
+  test(
+    'synced account data enables protection; a claimed direct flag grants no trust',
+    () {
+      final client = KnockTestClient('@alice:test.invalid');
+      client.accountData[KnockAccount.eventType] = BasicEvent(
+        type: KnockAccount.eventType,
+        content: {'enabled': true, 'version': 1},
+      );
+      final room = KnockTestRoom(client);
+      expect(room.isDirectChat, isTrue);
+      expect(client.isKnockRequest(room), isTrue);
+      room.states
+          .clear(); // Group/space or unknown invite metadata is still gated.
+      expect(client.isKnockRequest(room), isTrue);
+    },
+  );
 
   test('failed setting write keeps prior policy', () async {
     final client = KnockTestClient('@alice:test.invalid')..failWrite = true;
@@ -133,17 +132,20 @@ void main() {
     expect(client.knockEnabled, isTrue);
   });
 
-  test('accept joins only after explicit action and rejected/failed joins stay pending', () async {
-    final client = KnockTestClient('@alice:test.invalid');
-    final room = KnockTestRoom(client)..failJoin = true;
-    await expectLater(acceptKnock(room), throwsStateError);
-    expect(room.membership, Membership.invite);
-    room.failJoin = false;
-    await acceptKnock(room);
-    expect(room.joins, 1);
-    expect(room.membership, Membership.join);
-    await expectLater(rejectKnock(room), throwsStateError);
-  });
+  test(
+    'accept joins only after explicit action and rejected/failed joins stay pending',
+    () async {
+      final client = KnockTestClient('@alice:test.invalid');
+      final room = KnockTestRoom(client)..failJoin = true;
+      await expectLater(acceptKnock(room), throwsStateError);
+      expect(room.membership, Membership.invite);
+      room.failJoin = false;
+      await acceptKnock(room);
+      expect(room.joins, 1);
+      expect(room.membership, Membership.join);
+      await expectLater(rejectKnock(room), throwsStateError);
+    },
+  );
 
   test(
     'reject leaves without blocking; failed block does not silently decline',
