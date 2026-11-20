@@ -4,6 +4,16 @@ name: WeSay Android Test
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/wesay-android.yaml'
+      - 'lib/**'
+      - 'android/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.fvmrc'
   push:
     branches: [main]
     paths:
@@ -60,7 +70,7 @@ jobs:
         run: flutter test --no-pub test/wesay_test.dart test/knock_test.dart
       - name: Prepare optional build configuration
         env:
-          WESAY_HOMESERVER: ${{ secrets.WESAY_HOMESERVER }}
+          WESAY_HOMESERVER: ${{ github.event_name != 'pull_request' && secrets.WESAY_HOMESERVER || '' }}
         shell: python
         run: |
           import json, os
