@@ -10,6 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 This is an unaudited private development build for the founder's test accounts, not a public service or a final privacy policy.
 
 - Matrix end-to-end encryption is inherited from FluffyChat and its SDK. It does not hide all metadata. No claim of "we store nothing" is made.
+- The optional Knock preference is stored as unencrypted account metadata on your homeserver and syncs to other WeSay clients. It does not contain message content or upload your contacts. Other Matrix clients do not enforce it.
 - Your Synapse server can retain account identifiers, room membership, message timing, encrypted message/media data, IP/log information and other metadata according to its configuration. This repository does not configure server retention.
 - The app stores local account/session data, encryption keys, cached messages and diagnostics on the test device. Android cloud backup remains disabled as in upstream.
 - The test sign-in page does not fetch a public server directory. Choose your own test server; there is no built-in public default.

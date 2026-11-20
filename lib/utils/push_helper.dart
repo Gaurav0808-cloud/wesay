@@ -14,6 +14,7 @@ import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/call_kit_params.dart';
 import 'package:fluffychat/utils/client_manager.dart';
+import 'package:fluffychat/utils/knock.dart';
 import 'package:fluffychat/utils/matrix_live_kit_calls/matrix_live_kit_call.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/notification_avatar_extension.dart';
@@ -140,6 +141,9 @@ Future<void> _tryPushHelper(
     notification,
     storeInDatabase: false,
   );
+
+  await client.accountDataLoading;
+  if (event != null && client.isKnockRequest(event.room)) return;
 
   updateAppBadge(notification.counts?.unread ?? 0);
 

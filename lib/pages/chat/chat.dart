@@ -19,6 +19,7 @@ import 'package:fluffychat/pages/chat/start_poll_bottom_sheet.dart';
 import 'package:fluffychat/pages/chat/trust_user_key_dialog.dart';
 import 'package:fluffychat/pages/chat/utils/web_file_to_x_file.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
+import 'package:fluffychat/pages/knock/knock_requests.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
 import 'package:fluffychat/utils/file_selector.dart';
@@ -84,13 +85,16 @@ class ChatPage extends StatelessWidget {
       );
     }
 
-    return ChatPageWithRoom(
-      key: Key('chat_page_${roomId}_${eventId}_$action'),
+    return KnockChatGate(
       room: room,
-      shareItems: shareItems,
-      eventId: eventId,
-      timeline: timeline,
-      action: action,
+      childBuilder: () => ChatPageWithRoom(
+        key: Key('chat_page_${roomId}_${eventId}_$action'),
+        room: room,
+        shareItems: shareItems,
+        eventId: eventId,
+        timeline: timeline,
+        action: action,
+      ),
     );
   }
 }
@@ -1101,9 +1105,9 @@ class ChatController extends State<ChatPageWithRoom>
     if (!mounted) return;
     final result = await showFutureLoadingDialog(
       context: context,
-      future: () => Matrix.of(
-        context,
-      ).client.reportEvent(event.roomId!, event.eventId, reason: reason),
+      future: () =>
+          Matrix.of(context).client
+              .reportEvent(event.roomId!, event.eventId, reason: reason),
     );
     if (result.error != null) return;
     if (!mounted) return;
@@ -1235,9 +1239,9 @@ class ChatController extends State<ChatPageWithRoom>
     final timeline = this.timeline;
     if (timeline == null) return;
 
-    final forwardEvents = List<Event>.from(
-      selectedEvents,
-    ).map((event) => event.getDisplayEvent(timeline)).toList();
+    final forwardEvents = List<Event>.from(selectedEvents)
+        .map((event) => event.getDisplayEvent(timeline))
+        .toList();
 
     await showScaffoldDialog(
       context: context,

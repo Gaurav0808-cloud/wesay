@@ -7,6 +7,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/pages/knock/knock_setting_tile.dart';
 import 'package:fluffychat/utils/beautify_string_extension.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/app_lock.dart';
@@ -42,9 +43,9 @@ class SettingsSecurityView extends StatelessWidget {
         iconColor: theme.colorScheme.onSurface,
         child: MaxWidthBody(
           child: FutureBuilder(
-            future: Matrix.of(
-              context,
-            ).client.getCapabilities().timeout(const Duration(seconds: 10)),
+            future: Matrix.of(context).client
+                .getCapabilities()
+                .timeout(const Duration(seconds: 10)),
             builder: (context, snapshot) {
               final capabilities = snapshot.data;
               final error = snapshot.error;
@@ -58,6 +59,7 @@ class SettingsSecurityView extends StatelessWidget {
               }
               return Column(
                 children: [
+                  KnockSettingTile(key: ValueKey(client), client: client),
                   ListTile(
                     title: Text(
                       L10n.of(context).privacy,
@@ -69,9 +71,8 @@ class SettingsSecurityView extends StatelessWidget {
                   ),
                   SettingsSwitchListTile.adaptive(
                     title: L10n.of(context).sendTypingNotifications,
-                    subtitle: L10n.of(
-                      context,
-                    ).sendTypingNotificationsDescription,
+                    subtitle: L10n.of(context)
+                        .sendTypingNotificationsDescription,
                     setting: AppSettings.sendTypingNotifications,
                   ),
                   SettingsSwitchListTile.adaptive(

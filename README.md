@@ -2,13 +2,13 @@
 
 Work in progress, based on [FluffyChat](https://github.com/krille-chan/fluffychat). AGPL-3.0-or-later; original notices and third-party licences are retained. Not affiliated with the FluffyChat project.
 
-**Test accounts only. No real-user messages. Unaudited. Knock is a plan, not a shipped protection.**
+**Test accounts only. No real-user messages. Unaudited. Knock is an opt-in client prototype, not server-wide protection.**
 
 - [Install and build instructions](docs/TESTING.md)
 - [Test privacy notes](PRIVACY.md)
 - [Knock design plan](docs/KNOCK-PLAN.md)
 
-The Android app is named **WeSay Test** and installs separately from FluffyChat. The only active automation builds a test APK; upstream deployment workflows are archived. Enter your server on your device, or optionally supply a build secret. Never commit server settings, passwords or keys.
+The Android app is named **WeSay Knock Test** and installs separately from FluffyChat. Knock defaults off under Security and applies separately to each account. The only active automation builds a test APK; upstream deployment workflows are archived. Enter your server on your device, or optionally supply a build secret. Never commit server settings, passwords or keys.
 
 ---
 

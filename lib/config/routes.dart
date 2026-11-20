@@ -19,6 +19,7 @@ import 'package:fluffychat/pages/chat_search/chat_search_page.dart';
 import 'package:fluffychat/pages/device_settings/device_settings.dart';
 import 'package:fluffychat/pages/intro/intro_page_presenter.dart';
 import 'package:fluffychat/pages/invitation_selection/invitation_selection.dart';
+import 'package:fluffychat/pages/knock/knock_requests.dart';
 import 'package:fluffychat/pages/login/login.dart';
 import 'package:fluffychat/pages/new_group/new_group.dart';
 import 'package:fluffychat/pages/new_private_chat/new_private_chat.dart';
@@ -151,6 +152,11 @@ abstract class AppRoutes {
                   ),
           ),
           routes: [
+            GoRoute(
+              path: 'requests',
+              pageBuilder: (context, state) =>
+                  defaultPageBuilder(context, state, const KnockRequestsPage()),
+            ),
             GoRoute(
               path: 'archive',
               pageBuilder: (context, state) =>

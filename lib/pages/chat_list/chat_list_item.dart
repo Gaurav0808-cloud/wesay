@@ -7,6 +7,8 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat_list/active_call_indicator.dart';
 import 'package:fluffychat/pages/chat_list/unread_bubble.dart';
+import 'package:fluffychat/pages/knock/knock_requests.dart';
+import 'package:fluffychat/utils/knock.dart';
 import 'package:fluffychat/utils/matrix_live_kit_calls/matrix_live_kit_call.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/room_status_extension.dart';
@@ -41,6 +43,9 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (room.client.isKnockRequest(room)) {
+      return KnockRequestTile(room: room, onTap: onTap);
+    }
     final theme = Theme.of(context);
 
     final isMuted = room.pushRuleState != PushRuleState.notify;
@@ -302,9 +307,8 @@ class ChatListItem extends StatelessWidget {
                   Expanded(
                     child: room.isSpace && room.membership == Membership.join
                         ? Text(
-                            L10n.of(
-                              context,
-                            ).countChats(room.spaceChildren.length),
+                            L10n.of(context)
+                                .countChats(room.spaceChildren.length),
                           )
                         : typingText.isNotEmpty
                         ? Text(
@@ -353,9 +357,8 @@ class ChatListItem extends StatelessWidget {
                                               .tryGet<String>('reason') ??
                                           (isDirectChat
                                               ? L10n.of(context).newChatRequest
-                                              : L10n.of(
-                                                  context,
-                                                ).inviteGroupChat)
+                                              : L10n.of(context)
+                                                    .inviteGroupChat)
                                     : body ?? L10n.of(context).noMessagesYet,
                                 softWrap: false,
                                 maxLines: room.notificationCount >= 1 ? 2 : 1,
