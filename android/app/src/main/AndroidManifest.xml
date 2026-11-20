@@ -79,7 +79,7 @@
                <action android:name="android.intent.action.VIEW" />
                <category android:name="android.intent.category.DEFAULT" />
                <category android:name="android.intent.category.BROWSABLE" />
-               <data android:scheme="wesay.knocktest" android:host="chat" />
+               <data android:scheme="wesay.previewtest" android:host="chat" />
             </intent-filter>
 
             <!-- App can receive shared text -->
@@ -109,7 +109,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="wesay.knocktest.auth" android:path="/login"/>
+                <data android:scheme="wesay.previewtest.auth" android:path="/login"/>
             </intent-filter>
         </activity>
 

@@ -6,6 +6,7 @@
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/pages/sign_in/connection_controls.dart';
 import 'package:fluffychat/pages/sign_in/view_model/model/public_homeserver_data.dart';
 import 'package:fluffychat/pages/sign_in/view_model/sign_in_view_model.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
@@ -220,24 +221,16 @@ class SignInPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: SafeArea(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            foregroundColor: theme.colorScheme.onPrimary,
-                          ),
-                          onPressed:
+                        child: ConnectionControls(
+                          waiting:
                               state.loginLoading.connectionState ==
-                                  ConnectionState.waiting
-                              ? null
-                              : () => viewModel.connect(
-                                  context,
-                                  selectedHomserver,
-                                ),
-                          child:
-                              state.loginLoading.connectionState ==
-                                  ConnectionState.waiting
-                              ? const CircularProgressIndicator.adaptive()
-                              : Text(L10n.of(context).continueText),
+                              ConnectionState.waiting,
+                          hasError: state.loginLoading.hasError,
+                          continueLabel: L10n.of(context).continueText,
+                          cancelLabel: L10n.of(context).cancel,
+                          onConnect: () =>
+                              viewModel.connect(context, selectedHomserver),
+                          onCancel: viewModel.cancelConnection,
                         ),
                       ),
                     ),

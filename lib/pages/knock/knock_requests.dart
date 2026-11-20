@@ -199,7 +199,7 @@ class _KnockRequestPageState extends State<KnockRequestPage> {
           ),
           OutlinedButton(
             onPressed: _busy ? null : () => _run(rejectKnock),
-            child: const Text('Reject'),
+            child: const Text('Decline'),
           ),
           TextButton(
             onPressed: _busy || knockInviter(widget.room) == null

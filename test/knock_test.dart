@@ -6,6 +6,7 @@ import 'package:fluffychat/pages/knock/knock_setting_tile.dart';
 import 'package:fluffychat/utils/knock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 class _UnusedDatabase implements DatabaseApi {
@@ -81,7 +82,105 @@ class KnockTestRoom extends Room {
   }
 }
 
+Future<void> tapRequestAction(WidgetTester tester, String label) async {
+  final target = find.text(label).hitTestable();
+  for (var i = 0; i < 20 && target.evaluate().isEmpty; i++) {
+    await tester.drag(find.byType(ListView), const Offset(0, -120));
+    await tester.pumpAndSettle();
+  }
+  expect(target, findsOneWidget);
+  await tester.tap(target);
+  await tester.pumpAndSettle();
+}
+
+GoRouter requestRouter(Room room) => GoRouter(
+  initialLocation: '/request',
+  routes: [
+    GoRoute(
+      path: '/request',
+      builder: (context, state) => KnockRequestPage(room: room),
+    ),
+    GoRoute(
+      path: '/rooms/requests',
+      builder: (context, state) =>
+          const Scaffold(body: Text('Pending requests')),
+    ),
+    GoRoute(
+      path: '/rooms/:id',
+      builder: (context, state) =>
+          const Scaffold(body: Text('Accepted conversation')),
+    ),
+  ],
+);
+
 void main() {
+  testWidgets('accept and decline buttons require explicit action', (
+    tester,
+  ) async {
+    final client = KnockTestClient('@alice:test.invalid');
+    final accepted = KnockTestRoom(client);
+    final router = requestRouter(accepted);
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+    expect(accepted.joins, 0);
+    await tapRequestAction(tester, 'Accept');
+    await tester.pumpAndSettle();
+    expect(accepted.joins, 1);
+    expect(find.text('Accepted conversation'), findsOneWidget);
+    final declined = KnockTestRoom(client);
+    final secondRouter = requestRouter(declined);
+    addTearDown(secondRouter.dispose);
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: const ValueKey('decline'),
+        routerConfig: secondRouter,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tapRequestAction(tester, 'Decline');
+    await tester.pumpAndSettle();
+    expect(declined.leaves, 1);
+    expect(client.blocks, isEmpty);
+    expect(find.text('Pending requests'), findsOneWidget);
+  });
+
+  testWidgets(
+    'block confirmation can be cancelled and failed block remains retryable',
+    (tester) async {
+      final client = KnockTestClient('@alice:test.invalid');
+      final room = KnockTestRoom(client);
+      final router = requestRouter(room);
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      await tapRequestAction(tester, 'Block sender');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(client.blocks, isEmpty);
+      expect(room.leaves, 0);
+      client.failBlock = true;
+      await tapRequestAction(tester, 'Block sender');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Block sender').last);
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Could not complete this action.'),
+        findsOneWidget,
+      );
+      expect(room.membership, Membership.invite);
+      client.failBlock = false;
+      await tapRequestAction(tester, 'Block sender');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Block sender').last);
+      await tester.pumpAndSettle();
+      expect(client.blocks, ['@stranger:test.invalid']);
+      expect(room.leaves, 1);
+      expect(find.text('Pending requests'), findsOneWidget);
+    },
+  );
+
   test(
     'off by default; enabling affects only this account and new invitations',
     () async {

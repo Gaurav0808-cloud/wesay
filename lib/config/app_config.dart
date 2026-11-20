@@ -18,7 +18,7 @@ abstract class AppConfig {
   static const bool hideTypingUsernames = false;
 
   static const String inviteLinkPrefix = 'https://matrix.to/#/';
-  static const String deepLinkPrefix = 'wesay.knocktest://chat/';
+  static const String deepLinkPrefix = 'wesay.previewtest://chat/';
   static const String schemePrefix = 'matrix:';
   static const String pushNotificationsChannelId = 'fluffychat_push';
   static const String pushNotificationsAppId = 'chat.fluffy.fluffychat';
@@ -32,9 +32,9 @@ abstract class AppConfig {
       'https://ko-fi.com/post/How-to-use-end-to-end-encryption-in-FluffyChat-A5O725WDR5';
   static const String howDoIGetStickersTutorial =
       'https://ko-fi.com/post/How-to-add-a-sticker-pack-to-FluffyChat-N4N01OXATI';
-  static const String appId = 'io.github.gaurav0808cloud.wesay.knocktest';
-  static const String appOpenUrlScheme = 'wesay.knocktest';
-  static const String appSsoUrlScheme = 'wesay.knocktest.auth';
+  static const String appId = 'io.github.gaurav0808cloud.wesay.previewtest';
+  static const String appOpenUrlScheme = 'wesay.previewtest';
+  static const String appSsoUrlScheme = 'wesay.previewtest.auth';
   // Identifies the notification activation callback on Windows. Never change!
   static const String windowsNotificationGuid =
       '4894dfda-c70a-4ebc-b139-acae55f3988d';
