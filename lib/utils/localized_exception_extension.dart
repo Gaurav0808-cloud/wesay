@@ -3,6 +3,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -87,6 +88,10 @@ extension LocalizedExceptionExtension on Object {
       return L10n.of(
         context,
       ).badServerLoginTypesException(serverVersions, supportedVersions);
+    }
+    if (this is TimeoutException &&
+        exceptionContext == ExceptionContext.checkHomeserver) {
+      return 'The server did not respond in time. Check your connection and confirm that the server is online, then try again.';
     }
     if (this is IOException ||
         this is SocketException ||

@@ -14,6 +14,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
+import 'package:fluffychat/utils/knock.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
@@ -165,9 +166,11 @@ class ChatListController extends State<ChatList>
     }
   }
 
-  List<Room> get filteredRooms => Matrix.of(
-    context,
-  ).client.rooms.where(getRoomFilterByActiveFilter(activeFilter)).toList();
+  List<Room> get filteredRooms =>
+      Matrix.of(context).client.rooms
+          .where((room) => !room.client.isKnockRequest(room))
+          .where(getRoomFilterByActiveFilter(activeFilter))
+          .toList();
 
   bool isSearchMode = false;
   Future<QueryPublicRoomsResponse>? publicRoomsResponse;
@@ -434,9 +437,8 @@ class ChatListController extends State<ChatList>
         setActiveSpace(widget.activeSpace!);
       }
       if (mounted) {
-        searchServer = Matrix.of(
-          context,
-        ).store.getString(_serverStoreNamespace);
+        searchServer = Matrix.of(context).store
+            .getString(_serverStoreNamespace);
         Matrix.of(context).backgroundPush?.setupPush(context);
         UpdateNotifier.showUpdateDialog(context);
         UpdateNotifier.showUpdateAvailableBanner(context);
@@ -989,12 +991,10 @@ class ChatListController extends State<ChatList>
     setState(() {
       _activeSpaceId = null;
       Matrix.of(context).activeBundle = bundle;
-      if (!Matrix.of(
-        context,
-      ).currentBundle!.any((client) => client == Matrix.of(context).client)) {
-        Matrix.of(
-          context,
-        ).setActiveClient(Matrix.of(context).currentBundle!.first);
+      if (!Matrix.of(context).currentBundle!
+          .any((client) => client == Matrix.of(context).client)) {
+        Matrix.of(context)
+            .setActiveClient(Matrix.of(context).currentBundle!.first);
       }
     });
   }
@@ -1004,9 +1004,9 @@ class ChatListController extends State<ChatList>
     String? activeBundle,
   ) async {
     final l10n = L10n.of(context);
-    final client = Matrix.of(
-      context,
-    ).widget.clients[Matrix.of(context).getClientIndexByMatrixId(userId!)];
+    final client = Matrix.of(context)
+        .widget
+        .clients[Matrix.of(context).getClientIndexByMatrixId(userId!)];
     final action = await showModalActionPopup<EditBundleAction>(
       context: context,
       title: L10n.of(context).editBundlesForAccount,
@@ -1054,9 +1054,8 @@ class ChatListController extends State<ChatList>
 
   String? get secureActiveBundle {
     if (Matrix.of(context).activeBundle == null ||
-        !Matrix.of(
-          context,
-        ).accountBundles.keys.contains(Matrix.of(context).activeBundle)) {
+        !Matrix.of(context).accountBundles.keys
+            .contains(Matrix.of(context).activeBundle)) {
       return Matrix.of(context).accountBundles.keys.first;
     }
     return Matrix.of(context).activeBundle;

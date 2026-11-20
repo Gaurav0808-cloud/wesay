@@ -10,7 +10,7 @@ For the founder's test accounts only. No public pilot or real-user messages unti
 4. Sign in, enter your HTTPS Tailscale Serve address, select it, and continue. Enter the local username `alice` or `bob` (not a full `@alice:localhost` ID, which triggers server discovery).
 5. Test encrypted messages in both directions, then restart the app and test again. Confirm encryption and verify the new device using the existing client.
 
-The package ID is `io.github.gaurav0808cloud.wesay.test`, separate from FluffyChat. The test APK uses Android debug signing, is debuggable, and must never be distributed as a production release. A fresh cloud runner generates a new disposable debug key: subsequent APKs may require uninstall/reinstall, losing local keys. Before uninstalling, verify that another test device or a tested recovery backup can decrypt your test history. Production signing is a separate future setup.
+This build installs as **WeSay Knock Test**, alongside the earlier WeSay Test app so its local encryption keys are preserved. The package ID is `io.github.gaurav0808cloud.wesay.knocktest`, separate from FluffyChat. The test APK uses Android debug signing, is debuggable, and must never be distributed as a production release. A fresh cloud runner generates a new disposable debug key: subsequent APKs may require uninstall/reinstall, losing local keys. Before uninstalling, verify that another test device or a tested recovery backup can decrypt your test history. Production signing is a separate future setup.
 
 ## Optional default homeserver
 
@@ -26,4 +26,4 @@ The old FluffyChat workflows are preserved under `.github/upstream-workflows/` a
 
 ## Not implemented
 
-Knock, enforced contact-only group invitations, scam detection, migration from WhatsApp and payments are not implemented. Background push delivery has not been configured or verified. This fork has not been security audited. End-to-end encryption is provided by the inherited Matrix SDK; server metadata, local device data and encrypted backups still exist.
+Optional Knock is implemented inside WeSay; see [Knock behaviour and tests](KNOCK-PLAN.md). Server-enforced contact-only group invitations, scam detection, migration from WhatsApp and payments are not implemented. Background push delivery has not been configured or verified. This fork has not been security audited. End-to-end encryption is provided by the inherited Matrix SDK; server metadata, local device data and encrypted backups still exist.

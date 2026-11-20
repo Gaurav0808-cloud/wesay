@@ -9,7 +9,6 @@ import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/pages/sign_in/view_model/model/public_homeserver_data.dart';
 import 'package:fluffychat/pages/sign_in/view_model/sign_in_view_model.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/sign_in_flows/check_homeserver.dart';
 import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/view_model_builder.dart';
@@ -33,10 +32,7 @@ class SignInPage extends StatelessWidget {
           appBar: AppBar(
             leading:
                 state.loginLoading.connectionState == ConnectionState.waiting
-                ? CloseButton(
-                    onPressed: () =>
-                        viewModel.setLoginLoading(AsyncSnapshot.nothing()),
-                  )
+                ? CloseButton(onPressed: viewModel.cancelConnection)
                 : BackButton(onPressed: Navigator.of(context).pop),
             backgroundColor: theme.colorScheme.surface,
             surfaceTintColor: theme.colorScheme.surface,
@@ -82,6 +78,15 @@ class SignInPage extends StatelessWidget {
                     hintText: L10n.of(context).searchOrEnterHomeserverAddress,
                   ),
                 ),
+                if (state.loginLoading.error case final error?)
+                  Text(
+                    error.toLocalizedString(
+                      context,
+                      ExceptionContext.checkHomeserver,
+                    ),
+                    key: const Key('homeserver_connection_error'),
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
                 if (state.publicHomeservers.connectionState ==
                     ConnectionState.done)
                   Expanded(
@@ -224,11 +229,9 @@ class SignInPage extends StatelessWidget {
                               state.loginLoading.connectionState ==
                                   ConnectionState.waiting
                               ? null
-                              : () => connectToHomeserverFlow(
-                                  selectedHomserver,
+                              : () => viewModel.connect(
                                   context,
-                                  viewModel.setLoginLoading,
-                                  signUp,
+                                  selectedHomserver,
                                 ),
                           child:
                               state.loginLoading.connectionState ==

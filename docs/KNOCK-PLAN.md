@@ -1,34 +1,43 @@
-# Knock: proposed design, not implemented
+# Knock opt-in test implementation
 
-Goal: strangers ask for permission to start a conversation. No claim of complete spam/scam prevention.
+Knock is OFF by default. Each Matrix account has its own choice under Settings → Security → Knock. The boolean preference is stored as Matrix account data (`io.github.gaurav0808cloud.wesay.knock`) on the account's homeserver and syncs to other WeSay clients. This metadata is not end-to-end encrypted; it contains no message text or address-book uploads.
 
-## First prototype
+## On and off
 
-1. Define an accepted contact explicitly, using a Matrix ID and mutual conversation consent; do not infer trust from a display name, phone number, shared room or address-book upload.
-2. Unknown 1:1 room invitations appear in a separate Requests inbox. Show a minimal sender ID; do not join automatically, download media, fetch link previews, disclose presence/read receipts or send encryption keys before consent.
-3. Accept joins an encrypted room and marks the sender as accepted. Reject declines the invitation. Block additionally records the sender in the Matrix ignore list and suppresses future requests. Test behaviour across devices.
-4. Unknown group invitations also become requests; never auto-join. Enforcing "non-contacts cannot add me" across alternate clients needs a server-side invitation policy, not just a hidden UI notification.
+- Off: preserve the inherited WeSay/Matrix messaging and invitation behaviour. Do not auto-join rooms or groups.
+- On: every new conversation/group/space invitation goes to Requests. Already joined chats keep working. The first version does not assume a phone contact or a sender-controlled `is_direct` flag proves trust. Even someone you already chat with must get acceptance for a new room/group.
+- Switching off returns pending invitations to the normal list. It does not join, reject, delete or unblock anything.
+- Accept uses the SDK's normal explicit room join. Messages become available afterwards according to room encryption/history rules.
+- Reject declines this invitation without globally blocking its sender. A later invitation may appear again.
+- Block identifies the inviter by Matrix ID, records a standard Matrix ignore-list entry, then declines the invitation. A confirmation explains that blocking applies across chats. Failed block/save/join operations remain visible as errors and can be retried.
 
-Matrix `knock` is a protocol room-join request feature. The WeSay product name "Knock" here is a conversation-consent flow, not an assertion that protocol knocking implements these rules.
+## Client protection and limits
 
-## Important encryption boundary
+The normal chat controller, timeline and composer are not created for gated invitations, including direct chat routes and notification navigation. Request cards show plain Matrix IDs, without remote avatars, room titles, image previews or message previews. Pending-request local notifications/call alerts are suppressed. The existing test build still has background push disabled.
 
-A normal Matrix invite does not contain the sender's first encrypted chat message. The recipient normally needs to join and receive room keys to decrypt history. First prototype should show an invitation request, with the actual message only after acceptance. Do not put a private introduction in unencrypted invite/state data. A confidential first-message preview before acceptance requires a separately reviewed design; do not invent a new cryptographic protocol.
+This is a WeSay client prototype. Other Matrix clients do not implement this preference. It does NOT reject invitations at the Synapse API or stop account/room floods. It does not protect against scams in already accepted chats or groups. Server-side policy, federation/bypass tests, rate limits, independent security audit, legal review and abuse-response staff are required before real-user testing.
 
-## Server enforcement and abuse handling
+Matrix protocol `knock` is a separate room-join-request mechanism; no new encryption protocol is introduced here. WeSay shows an invitation, not a supposedly private first-message preview hidden in unencrypted room state.
 
-Investigate Synapse spam-checker/module hooks against the pinned Synapse version: invitation policy, account registration, room creation and request rates. Verify bypass resistance with a different Matrix client, federation, re-invitations, new accounts and multi-device state. Decide whether the first pilot disables federation. Enforce payload and media limits, rate limits and cooldowns. These measures reduce exposure; they cannot prevent scams from accepted contacts or compromised accounts.
+## Manual two-account test
 
-Reporting must be intentional and explain exactly what evidence is shared with moderators. Never silently scan private encrypted chats server-side or claim that E2EE permits that. Avoid publishing reports or private message text in GitHub issues.
+1. Install WeSay Knock Test alongside the earlier test app. Sign in using Alice and verify the new session from the existing app. Do not uninstall an old app or reset the identity.
+2. Confirm Knock is off in Alice's Security settings. Existing Bob messages should remain readable.
+3. On Bob's laptop client, create a new private test group and invite Alice. With Knock off, this invitation appears in the normal chat list.
+4. Turn Knock on for Alice. The pending invitation should move to Requests without joining. Close/reopen the app and confirm the setting persists.
+5. Open the request. There must be no message composer or sender/room image loaded in the request page. Accept, then test a new encrypted message in both directions.
+6. Create separate invitations to test Reject and Block. Confirm rejected rooms are left; confirm a blocked sender appears in the existing Blocked users setting. Restore the test account's block list when done.
+7. Turn Knock off and confirm remaining requests return to the normal list without joining. Bob's own account preference must remain off unless Bob enabled it.
+8. On a second WeSay client for Alice, verify the setting syncs. The original FluffyChat app will not enforce Knock.
 
-## Tests before public use
+## References
 
-Unknown direct/group invites; accepted contacts; reject/block/reinvite; spoofed names; address-book permission denied; encrypted rooms; blocked calls/attachments/previews before consent; multi-device reconciliation; account logout/recovery; direct Matrix API and alternate-client bypasses; federation; request floods; malicious payloads; report consent. Independent audit and legal review precede real-user messages.
+- [Matrix account data](https://spec.matrix.org/latest/client-server-api/#client-config)
+- [Matrix room membership](https://spec.matrix.org/latest/client-server-api/#room-membership)
+- [Current Synapse spam-checker callbacks for future server enforcement](https://element-hq.github.io/synapse/latest/modules/spam_checker_callbacks.html)
 
-## References to verify during implementation
+## Connection handling follow-up
 
-- [Matrix Client-Server API: room membership and invitations](https://spec.matrix.org/latest/client-server-api/#room-membership)
-- [Matrix Client-Server API: knocking on rooms](https://spec.matrix.org/latest/client-server-api/#knocking-on-rooms)
-- [Current Element Synapse spam checker callbacks](https://element-hq.github.io/synapse/latest/modules/spam_checker_callbacks.html)
+The next revision performs pre-login discovery in an isolated, unauthenticated Matrix SDK client, limits the network check to 20 seconds, closes its dedicated HTTP transport on timeout/cancel, and ignores results from cancelled/disposed sign-in screens. It preserves standard well-known delegation and only copies a successful current result to the actual login client. The underlying SDK and encryption are unchanged. An offline laptop/server still cannot receive messages: this improves feedback, not server availability.
 
-The exact installed Synapse and Matrix SDK versions must be checked before choosing callbacks or changing key-sharing behaviour.
+PR updates now run strict analysis and all focused tests without generating repeated 200 MB APK artifacts. Main-branch/manual builds retain APK output. The already downloaded Knock APK predates these connection-handling changes.

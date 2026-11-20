@@ -65,7 +65,7 @@ enum AppSettings<T> {
   presetHomeserver<String>('chat.fluffy.preset_homeserver', ''),
   welcomeText<String>(
     'chat.fluffy.welcome_text',
-    'Private test build. Use your own test accounts only. Knock is not available yet.',
+    'Test accounts only. Knock is optional in Security settings. Protection applies inside WeSay.',
   ),
   website<String>(
     'chat.fluffy.website_url',

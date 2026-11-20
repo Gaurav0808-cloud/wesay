@@ -6,6 +6,7 @@
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/client_download_content_extension.dart';
+import 'package:fluffychat/utils/knock.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/notification_background_handler.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
@@ -25,11 +26,15 @@ extension LocalNotificationsExtension on MatrixState {
     ..load();
 
   Future<void> showLocalNotification(Event event) async {
+    await event.room.client.accountDataLoading;
+    if (!mounted) return;
+    if (event.room.client.isKnockRequest(event.room)) return;
     if (event.type == RtcNotificationContent.eventType &&
         event.tryParseRtcNotificationContent()?.notificationType == .ring) {
       final context =
           FluffyChatApp.router.routerDelegate.navigatorKey.currentContext ??
           this.context;
+      if (!context.mounted) return;
       showDialog<bool>(
         context: context,
         builder: (_) => IncomingCallDialog(event: event),
