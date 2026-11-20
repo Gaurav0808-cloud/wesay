@@ -41,11 +41,25 @@ class _NoDatabase implements DatabaseApi {
 
 class _Transport extends MockClient {
   bool closed = false;
-  _Transport(Future<http.Response> Function(http.Request) handler)
-    : super(handler);
+  final _closeSignal = Completer<void>();
+  _Transport(super.fn);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    if (closed) return Future.error(http.ClientException('closed'));
+    // Model IOClient.close faithfully, including in-flight cancellation.
+    return Future.any<http.StreamedResponse>([
+      super.send(request),
+      _closeSignal.future.then<http.StreamedResponse>(
+        (_) => throw http.ClientException('closed'),
+      ),
+    ]);
+  }
+
   @override
   void close() {
     closed = true;
+    if (!_closeSignal.isCompleted) _closeSignal.complete();
     super.close();
   }
 }

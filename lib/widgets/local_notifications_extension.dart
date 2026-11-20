@@ -34,6 +34,7 @@ extension LocalNotificationsExtension on MatrixState {
       final context =
           FluffyChatApp.router.routerDelegate.navigatorKey.currentContext ??
           this.context;
+      if (!context.mounted) return;
       showDialog<bool>(
         context: context,
         builder: (_) => IncomingCallDialog(event: event),
