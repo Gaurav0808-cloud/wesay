@@ -24,3 +24,11 @@ Reporting must be intentional and explain exactly what evidence is shared with m
 ## Tests before public use
 
 Unknown direct/group invites; accepted contacts; reject/block/reinvite; spoofed names; address-book permission denied; encrypted rooms; blocked calls/attachments/previews before consent; multi-device reconciliation; account logout/recovery; direct Matrix API and alternate-client bypasses; federation; request floods; malicious payloads; report consent. Independent audit and legal review precede real-user messages.
+
+## References to verify during implementation
+
+- [Matrix Client-Server API: room membership and invitations](https://spec.matrix.org/latest/client-server-api/#room-membership)
+- [Matrix Client-Server API: knocking on rooms](https://spec.matrix.org/latest/client-server-api/#knocking-on-rooms)
+- [Current Element Synapse spam checker callbacks](https://element-hq.github.io/synapse/latest/modules/spam_checker_callbacks.html)
+
+The exact installed Synapse and Matrix SDK versions must be checked before choosing callbacks or changing key-sharing behaviour.
