@@ -8,14 +8,18 @@ import 'package:flutter_test/flutter_test.dart';
 Future<void> tapVisible(WidgetTester tester, String label) =>
     tapFinder(tester, find.text(label));
 
-Future<void> tapFinder(WidgetTester tester, Finder finder) async {
+Future<void> showFinder(WidgetTester tester, Finder finder) async {
   final target = finder.hitTestable();
   for (var attempt = 0; attempt < 30 && target.evaluate().isEmpty; attempt++) {
     await tester.drag(find.byType(ListView), const Offset(0, -150));
     await tester.pumpAndSettle();
   }
   expect(target, findsOneWidget);
-  await tester.tap(target);
+}
+
+Future<void> tapFinder(WidgetTester tester, Finder finder) async {
+  await showFinder(tester, finder);
+  await tester.tap(finder.hitTestable());
   await tester.pumpAndSettle();
 }
 
@@ -104,6 +108,7 @@ void main() {
           .text,
       'Demo user',
     );
+    await showFinder(tester, find.byTooltip('Avatar 1'));
     expect(
       tester.widget<ChoiceChip>(find.byType(ChoiceChip).first).selected,
       isTrue,
