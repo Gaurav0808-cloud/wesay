@@ -40,20 +40,33 @@ class _KnockSettingTileState extends State<KnockSettingTile> {
     future: widget.client.accountDataLoading,
     builder: (context, loaded) => StreamBuilder(
       stream: widget.client.onSync.stream,
-      builder: (context, _) => SwitchListTile.adaptive(
-        key: const Key('knock_switch'),
-        secondary: const Icon(Icons.front_hand_outlined),
-        title: const Text('Knock'),
-        subtitle: Text(
-          _saving ? 'Saving for this account…' : 'On: new conversations and group invitations go to Requests. Existing chats keep working. Off: normal messaging in WeSay.',
-        ),
-        value: widget.client.knockEnabled,
-        onChanged:
-            _saving ||
-                loaded.hasError ||
-                loaded.connectionState == ConnectionState.waiting
-            ? null
-            : _change,
+      builder: (context, _) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SwitchListTile.adaptive(
+            key: const Key('knock_switch'),
+            secondary: const Icon(Icons.front_hand_outlined),
+            title: const Text('Knock'),
+            subtitle: Text(
+              _saving
+                  ? 'Saving for this account…'
+                  : 'On: new conversations and group invitations go to Requests. Existing chats keep working. Off: normal messaging in WeSay.',
+            ),
+            value: widget.client.knockEnabled,
+            onChanged:
+                _saving ||
+                    loaded.hasError ||
+                    loaded.connectionState == ConnectionState.waiting
+                ? null
+                : _change,
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Text(
+              'Test feature: this setting is enforced by this WeSay client. Other Matrix apps may handle invitations differently. It does not prevent every scam.',
+            ),
+          ),
+        ],
       ),
     ),
   );

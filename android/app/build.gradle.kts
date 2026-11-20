@@ -66,7 +66,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.gaurav0808cloud.wesay.knocktest"
+        applicationId = "io.github.gaurav0808cloud.wesay.previewtest"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

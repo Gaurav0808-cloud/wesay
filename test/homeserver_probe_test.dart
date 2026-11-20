@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/pages/sign_in/connection_controls.dart';
 import 'package:fluffychat/pages/sign_in/view_model/model/public_homeserver_data.dart';
 import 'package:fluffychat/pages/sign_in/view_model/sign_in_view_model.dart';
 import 'package:fluffychat/utils/sign_in_flows/homeserver_probe.dart';
@@ -88,6 +89,41 @@ http.Response _normalResponse(http.Request request) {
 }
 
 void main() {
+  testWidgets(
+    'connection controls expose retry and cancellation without duplicate starts',
+    (tester) async {
+      var connects = 0;
+      var cancels = 0;
+      Widget app({bool waiting = false, bool hasError = false}) => MaterialApp(
+        home: Scaffold(
+          body: ConnectionControls(
+            waiting: waiting,
+            hasError: hasError,
+            continueLabel: 'Continue',
+            cancelLabel: 'Cancel',
+            onConnect: () => connects++,
+            onCancel: () => cancels++,
+          ),
+        ),
+      );
+      await tester.pumpWidget(app());
+      await tester.tap(find.text('Continue'));
+      expect(connects, 1);
+      await tester.pumpWidget(app(waiting: true));
+      expect(
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton)).onPressed,
+        isNull,
+      );
+      await tester.tap(find.text('Cancel'));
+      expect(cancels, 1);
+      expect(connects, 1);
+      await tester.pumpWidget(app(hasError: true));
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      await tester.tap(find.text('Retry connection'));
+      expect(connects, 2);
+    },
+  );
+
   testWidgets(
     'cancel and retry share client initialization and never apply stale results',
     (tester) async {
