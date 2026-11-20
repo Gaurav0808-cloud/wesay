@@ -99,9 +99,9 @@ class _SignupPreviewState extends State<SignupPreview> {
                   ),
                   if (_continued) ...[
                     const SizedBox(height: 24),
-                    const Semantics(
+                    Semantics(
                       liveRegion: true,
-                      child: Text(
+                      child: const Text(
                         'Preview complete. Phone verification and account creation are not connected. No code was sent.',
                       ),
                     ),

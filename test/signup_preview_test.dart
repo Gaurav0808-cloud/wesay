@@ -21,9 +21,13 @@ void main() {
     final phone = tester.widget<TextFormField>(
       find.byKey(const ValueKey('demo-phone')),
     );
-    expect(phone.readOnly, isTrue);
+    expect(tester.widget<EditableText>(find.byType(EditableText)).readOnly, isTrue);
     expect(phone.initialValue, '0000000000');
-    await tester.ensureVisible(find.text('Continue with demo number'));
+    await tester.scrollUntilVisible(
+      find.text('Continue with demo number'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Continue with demo number'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Preview complete.'), findsOneWidget);
@@ -56,10 +60,18 @@ void main() {
         home: SignupPreview(onTestSignIn: () {}),
       ),
     );
-    await tester.ensureVisible(find.text('Get started'));
+    await tester.scrollUntilVisible(
+      find.text('Get started'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Get started'));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Continue with demo number'));
+    await tester.scrollUntilVisible(
+      find.text('Continue with demo number'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Continue with demo number'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Restart preview'));
