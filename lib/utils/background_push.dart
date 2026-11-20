@@ -122,7 +122,7 @@ class BackgroundPush {
       //<GOOGLE_SERVICES>    flutterLocalNotificationsPlugin: _flutterLocalNotificationsPlugin,
       //<GOOGLE_SERVICES>  ),
       //<GOOGLE_SERVICES>);
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid && AppConfig.enableBackgroundPush) {
         await UnifiedPush.initialize(
           onNewEndpoint: _newUpEndpoint,
           onRegistrationFailed: (_, i) => _upUnregistered(i),
@@ -161,6 +161,7 @@ class BackgroundPush {
     String? gatewayUrl,
     String? token,
   }) async {
+    if (!AppConfig.enableBackgroundPush) return;
     if (PlatformInfos.isIOS) {
       //<GOOGLE_SERVICES>await firebase.requestPermission();
     }
@@ -264,6 +265,7 @@ class BackgroundPush {
   static bool _wentToRoomOnStartup = false;
 
   Future<void> setupPush(BuildContext context) async {
+    if (!AppConfig.enableBackgroundPush) return;
     if (PlatformInfos.isAndroid &&
         (await UnifiedPush.getDistributors()).isNotEmpty &&
         context.mounted) {
@@ -338,6 +340,7 @@ class BackgroundPush {
   }
 
   Future<void> setupFirebase(Client client) async {
+    if (!AppConfig.enableBackgroundPush) return;
     Logs().v('Setup firebase');
     if (!firebaseEnabled) {
       await _noFcmWarning();
@@ -374,6 +377,7 @@ class BackgroundPush {
   }
 
   Future<void> _newUpEndpoint(PushEndpoint newPushEndpoint, String i) async {
+    if (!AppConfig.enableBackgroundPush) return;
     final newEndpoint = newPushEndpoint.url;
     upAction = true;
     if (newEndpoint.isEmpty) {
@@ -458,6 +462,7 @@ class UPFunctions extends UnifiedPushFunctions {
 
   @override
   Future<void> registerApp(String instance) async {
+    if (!AppConfig.enableBackgroundPush) return;
     await UnifiedPush.register(instance: instance, features: features);
   }
 

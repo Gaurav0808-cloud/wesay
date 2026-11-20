@@ -3,7 +3,6 @@
     <item>
         <bitmap android:gravity="fill" android:src="@drawable/background"/>
     </item>
-    <item>
-        <bitmap android:gravity="center" android:src="@drawable/splash"/>
-    </item>
+    <item android:gravity="center" android:drawable="@drawable/wesay_launcher"
+        android:width="108dp" android:height="108dp" />
 </layer-list>

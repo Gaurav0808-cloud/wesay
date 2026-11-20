@@ -6,16 +6,19 @@
 import 'dart:ui';
 
 abstract class AppConfig {
+  // Test builds have no configured push service.
+  static bool get enableBackgroundPush => false;
+
   static const Color primaryColor = Color(0xFF261386);
 
   static const Color chatColor = primaryColor;
   static const double messageFontSize = 16.0;
   static const bool allowOtherHomeservers = true;
-  static const bool enableRegistration = true;
+  static const bool enableRegistration = false;
   static const bool hideTypingUsernames = false;
 
   static const String inviteLinkPrefix = 'https://matrix.to/#/';
-  static const String deepLinkPrefix = 'im.fluffychat://chat/';
+  static const String deepLinkPrefix = 'wesay.test://chat/';
   static const String schemePrefix = 'matrix:';
   static const String pushNotificationsChannelId = 'fluffychat_push';
   static const String pushNotificationsAppId = 'chat.fluffy.fluffychat';
@@ -29,17 +32,17 @@ abstract class AppConfig {
       'https://ko-fi.com/post/How-to-use-end-to-end-encryption-in-FluffyChat-A5O725WDR5';
   static const String howDoIGetStickersTutorial =
       'https://ko-fi.com/post/How-to-add-a-sticker-pack-to-FluffyChat-N4N01OXATI';
-  static const String appId = 'im.fluffychat.app';
-  static const String appOpenUrlScheme = 'im.fluffychat';
-  static const String appSsoUrlScheme = 'im.fluffychat.auth';
+  static const String appId = 'io.github.gaurav0808cloud.wesay.test';
+  static const String appOpenUrlScheme = 'wesay.test';
+  static const String appSsoUrlScheme = 'wesay.test.auth';
   // Identifies the notification activation callback on Windows. Never change!
   static const String windowsNotificationGuid =
       '4894dfda-c70a-4ebc-b139-acae55f3988d';
 
   static const String sourceCodeUrl =
-      'https://github.com/krille-chan/fluffychat';
+      'https://github.com/Gaurav0808-cloud/wesay';
   static const String supportUrl =
-      'https://github.com/krille-chan/fluffychat/issues';
+      'https://github.com/Gaurav0808-cloud/wesay/issues';
   static const String changelogUrl = 'https://fluffychat.im/changelog/';
   static const String latestReleaseApiUrl =
       'https://api.github.com/repos/krille-chan/fluffychat/releases/latest';
@@ -51,7 +54,7 @@ abstract class AppConfig {
   static final Uri newIssueUrl = Uri(
     scheme: 'https',
     host: 'github.com',
-    path: '/krille-chan/fluffychat/issues/new',
+    path: '/Gaurav0808-cloud/wesay/issues/new',
   );
 
   static final Uri homeserverList = Uri(

@@ -3,8 +3,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/widgets/wesay_logo.dart';
 import 'package:fluffychat/pages/intro/flows/restore_backup_flow.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
@@ -116,11 +118,7 @@ class IntroPage extends StatelessWidget {
                               tag: 'info-logo',
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(128),
-                                child: Image.asset(
-                                  './assets/logo/mini/logo_mini.png',
-                                  width: 128,
-                                  height: 128,
-                                ),
+                                child: const WeSayLogo(size: 128),
                               ),
                             ),
                           ),
@@ -144,7 +142,7 @@ class IntroPage extends StatelessWidget {
                               mainAxisSize: .min,
                               crossAxisAlignment: .stretch,
                               children: [
-                                if (!hasPresetHomeserver)
+                                if (!hasPresetHomeserver && AppConfig.enableRegistration)
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:

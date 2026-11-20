@@ -52,25 +52,37 @@ enum AppSettings<T> {
   ),
   displayChatDetailsColumn('chat.fluffy.display_chat_details_column', false),
   // AppConfig-mirrored settings
-  applicationName<String>('chat.fluffy.application_name', 'FluffyChat'),
-  defaultHomeserver<String>('chat.fluffy.default_homeserver', 'matrix.org'),
+  applicationName<String>('chat.fluffy.application_name', 'WeSay'),
+  defaultHomeserver<String>(
+    'chat.fluffy.default_homeserver',
+    String.fromEnvironment('WESAY_HOMESERVER'),
+  ),
   // colorSchemeSeed stored as ARGB int
   colorSchemeSeedInt<int>('chat.fluffy.color_scheme_seed', 0xFF5625BA),
   emojiSuggestionLocale<String>('emoji_suggestion_locale', ''),
   enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', true),
   enableMatrixNativeOIDC<bool>('chat.fluffy.enable_matrix_native_oidc', true),
   presetHomeserver<String>('chat.fluffy.preset_homeserver', ''),
-  welcomeText<String>('chat.fluffy.welcome_text', ''),
-  website<String>('chat.fluffy.website_url', 'https://fluffychat.im'),
+  welcomeText<String>(
+    'chat.fluffy.welcome_text',
+    'Private test build. Use your own test accounts only. Knock is not available yet.',
+  ),
+  website<String>(
+    'chat.fluffy.website_url',
+    'https://github.com/Gaurav0808-cloud/wesay',
+  ),
   logoUrl<String>(
     'chat.fluffy.logo_url',
     'https://fluffychat.im/assets/favicon.png',
   ),
   privacyPolicy<String>(
     'chat.fluffy.privacy_policy_url',
-    'https://fluffychat.im/privacy',
+    'https://github.com/Gaurav0808-cloud/wesay/blob/main/PRIVACY.md',
   ),
-  tos<String>('chat.fluffy.tos_url', 'https://fluffychat.im/tos'),
+  tos<String>(
+    'chat.fluffy.tos_url',
+    'https://github.com/Gaurav0808-cloud/wesay/blob/main/docs/TESTING.md',
+  ),
   sendTimelineEventTimeout<int>('chat.fluffy.send_timeline_event_timeout', 15),
   webNotificationSound<bool>('chat.fluffy.web_notification_sound', true),
   chatFilter<String>('chat.fluffy.chat_filter', 'allChats'),
@@ -81,7 +93,7 @@ enum AppSettings<T> {
   benchmarksInLogs<bool>('chat.fluffy.benchmarks_in_logs', false),
   autoSendErrorReports<bool?>('chat.fluffy.auto_send_eror_reports', null),
   knownErrorHashes<List<String>>('chat.fluffy.known_crash_hashes', []),
-  checkForUpdates<bool>('chat.fluffy.check_for_updates', true),
+  checkForUpdates<bool>('chat.fluffy.check_for_updates', false),
   lastUpdateCheckDate<String>('chat.fluffy.last_update_check_date', ''),
   fallbackLiveKitInstance<String>('chat.fluffy.fallback_live_kit_instance', '');
 

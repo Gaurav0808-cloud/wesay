@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/widgets/wesay_logo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -96,11 +97,7 @@ abstract class PlatformInfos {
       ],
       applicationIcon: ClipRRect(
         borderRadius: BorderRadius.circular(64),
-        child: Image.asset(
-          './assets/logo/mini/logo_mini.png',
-          width: 64,
-          height: 64,
-        ),
+        child: const WeSayLogo(size: 64),
       ),
       applicationName: AppSettings.applicationName.value,
     );

@@ -1,3 +1,19 @@
+# WeSay — private Android test fork
+
+Work in progress, based on [FluffyChat](https://github.com/krille-chan/fluffychat). AGPL-3.0-or-later; original notices and third-party licences are retained. Not affiliated with the FluffyChat project.
+
+**Test accounts only. No real-user messages. Unaudited. Knock is a plan, not a shipped protection.**
+
+- [Install and build instructions](docs/TESTING.md)
+- [Test privacy notes](PRIVACY.md)
+- [Knock design plan](docs/KNOCK-PLAN.md)
+
+The Android app is named **WeSay Test** and installs separately from FluffyChat. The only active automation builds a test APK; upstream deployment workflows are archived. Enter your server on your device, or optionally supply a build secret. Never commit server settings, passwords or keys.
+
+---
+
+## Upstream FluffyChat documentation
+
 <!--
 SPDX-FileCopyrightText: 2019-Present Christian Kußowski
 SPDX-FileCopyrightText: 2019-Present Contributors to FluffyChat

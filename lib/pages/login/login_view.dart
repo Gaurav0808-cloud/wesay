@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import 'package:fluffychat/l10n/l10n.dart';
+import 'package:fluffychat/widgets/wesay_logo.dart';
 import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -43,11 +44,7 @@ class LoginView extends StatelessWidget {
                     tag: 'info-logo',
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(128),
-                      child: Image.asset(
-                        './assets/logo/mini/logo_mini.png',
-                        width: 128,
-                        height: 128,
-                      ),
+                      child: const WeSayLogo(size: 128),
                     ),
                   ),
                 ),
