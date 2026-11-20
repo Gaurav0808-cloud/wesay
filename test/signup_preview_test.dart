@@ -5,8 +5,11 @@ import 'package:fluffychat/pages/signup_preview/signup_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future<void> tapVisible(WidgetTester tester, String label) async {
-  final target = find.text(label).hitTestable();
+Future<void> tapVisible(WidgetTester tester, String label) =>
+    tapFinder(tester, find.text(label));
+
+Future<void> tapFinder(WidgetTester tester, Finder finder) async {
+  final target = finder.hitTestable();
   for (var attempt = 0; attempt < 30 && target.evaluate().isEmpty; attempt++) {
     await tester.drag(find.byType(ListView), const Offset(0, -150));
     await tester.pumpAndSettle();
@@ -61,7 +64,7 @@ void main() {
       find.byKey(const ValueKey('demo-name')),
       'Test Mango',
     );
-    await tester.tap(find.byTooltip('Avatar 2'));
+    await tapFinder(tester, find.byTooltip('Avatar 2'));
     await tester.pumpAndSettle();
     await tapVisible(tester, 'Finish preview');
     expect(find.text('Preview complete'), findsOneWidget);
@@ -81,7 +84,7 @@ void main() {
       find.byKey(const ValueKey('demo-name')),
       'Old sample',
     );
-    await tester.tap(find.byTooltip('Avatar 3'));
+    await tapFinder(tester, find.byTooltip('Avatar 3'));
     await tapVisible(tester, 'Finish preview');
     await tapVisible(tester, 'Restart preview');
     await toVerification(tester);
