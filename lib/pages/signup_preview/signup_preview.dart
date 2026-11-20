@@ -40,6 +40,7 @@ class _SignupPreviewState extends State<SignupPreview> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),
             child: ListView(
+              key: ValueKey(_phoneStep),
               padding: const EdgeInsets.all(24),
               children: [
                 const Align(child: WeSayLogo(size: 88)),

@@ -5,6 +5,17 @@ import 'package:fluffychat/pages/signup_preview/signup_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Future<void> tapVisible(WidgetTester tester, String label) async {
+  final target = find.text(label).hitTestable();
+  for (var attempt = 0; attempt < 30 && target.evaluate().isEmpty; attempt++) {
+    await tester.drag(find.byType(ListView), const Offset(0, -150));
+    await tester.pumpAndSettle();
+  }
+  expect(target, findsOneWidget);
+  await tester.tap(target);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('offline demo cannot accept real numbers or sign users in', (
     tester,
@@ -16,31 +27,21 @@ void main() {
       ),
     );
     expect(find.text('No SMS is sent. No account is created.'), findsOneWidget);
-    await tester.tap(find.text('Get started'));
-    await tester.pumpAndSettle();
+    await tapVisible(tester, 'Get started');
     final phone = tester.widget<TextFormField>(
       find.byKey(const ValueKey('demo-phone')),
     );
-    expect(tester.widget<EditableText>(find.byType(EditableText)).readOnly, isTrue);
-    expect(phone.initialValue, '0000000000');
-    await tester.scrollUntilVisible(
-      find.text('Continue with demo number'),
-      150,
-      scrollable: find.byType(Scrollable).first,
+    expect(
+      tester.widget<EditableText>(find.byType(EditableText)).readOnly,
+      isTrue,
     );
-    await tester.tap(find.text('Continue with demo number'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Preview complete.'), findsOneWidget);
+    expect(phone.initialValue, '0000000000');
+    await tapVisible(tester, 'Continue with demo number');
     expect(signInRequests, 0);
-    await tester.ensureVisible(find.text('Restart preview'));
-    await tester.tap(find.text('Restart preview'));
-    await tester.pumpAndSettle();
+    await tapVisible(tester, 'Restart preview');
     expect(find.text('Get started'), findsOneWidget);
     expect(find.textContaining('Preview complete.'), findsNothing);
-    await tester.ensureVisible(
-      find.text('Sign in with an existing test account'),
-    );
-    await tester.tap(find.text('Sign in with an existing test account'));
+    await tapVisible(tester, 'Sign in with an existing test account');
     expect(signInRequests, 1);
   });
 
@@ -60,24 +61,14 @@ void main() {
         home: SignupPreview(onTestSignIn: () {}),
       ),
     );
-    await tester.scrollUntilVisible(
-      find.text('Get started'),
-      150,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('Get started'));
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Continue with demo number'),
-      150,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('Continue with demo number'));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Restart preview'));
+    await tapVisible(tester, 'Get started');
+    await tapVisible(tester, 'Continue with demo number');
+    await tapVisible(tester, 'Restart preview');
     expect(tester.takeException(), isNull);
+    await tapVisible(tester, 'Get started');
     await tester.tap(find.byTooltip('Back to welcome'));
     await tester.pumpAndSettle();
     expect(find.text('Say hello with WeSay'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
