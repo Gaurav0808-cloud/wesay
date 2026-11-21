@@ -79,11 +79,11 @@ jobs:
       - name: Verify package and signature
         shell: python
         run: |
-          import hashlib, os, re, shutil, subprocess
+          import hashlib, os, re, shutil, subprocess, zipfile
           from pathlib import Path
           source = Path('build/app/outputs/flutter-apk/app-profile.apk')
-          if source.stat().st_size >= 80000000:
-              raise SystemExit('APK exceeds conservative free-storage upload cap')
+          if source.stat().st_size >= 250000000:
+              raise SystemExit('Unexpectedly large test APK')
           sdk = Path(os.environ['ANDROID_HOME']) / 'build-tools'
           version = sorted((p for p in sdk.iterdir() if (p / 'aapt').exists() and (p / 'apksigner').exists()), key=lambda p: tuple(int(x) for x in re.findall(r'\d+', p.name)))[-1]
           badging = subprocess.check_output([str(version / 'aapt'), 'dump', 'badging', str(source)], text=True)
@@ -100,6 +100,14 @@ jobs:
           digest = hashlib.sha256(apk.read_bytes()).hexdigest()
           (out / 'SHA256SUMS.txt').write_text(f'{digest}  {apk.name}\n')
           (out / 'VERIFY.txt').write_text('Source: ' + os.environ['GITHUB_SHA'] + '\n' + package + '\n' + abi + '\n' + signature)
+          upload = Path('upload'); upload.mkdir(exist_ok=True)
+          archive = upload / 'WeSay-Combined-Test.zip'
+          with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
+              for file in sorted(out.iterdir()):
+                  bundle.write(file, arcname=file.name)
+          if archive.stat().st_size >= 80000000:
+              raise SystemExit('Compressed download exceeds conservative free-storage upload cap')
+          print(f'Compressed download bytes: {archive.stat().st_size}')
           print(package)
           print(abi)
           print(signature)
@@ -130,7 +138,8 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: wesay-combined-test-apk
-          path: dist/
+          path: upload/
           retention-days: 1
-          compression-level: 9
+          # The inner ZIP is measured before upload; the outer archive is uncompressed.
+          compression-level: 0
           if-no-files-found: error
