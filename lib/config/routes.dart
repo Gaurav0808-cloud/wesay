@@ -47,6 +47,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:matrix/matrix.dart';
 
 abstract class AppRoutes {
+  // Profile test APKs use AOT compilation to keep downloads small. Release
+  // builds cannot enable this demo, even if the define is supplied.
+  static const enableSignupPreview = kDebugMode ||
+      (kProfileMode && bool.fromEnvironment('WESAY_OFFLINE_PREVIEW'));
+
   static FutureOr<String?> loggedInRedirect(
     BuildContext context,
     GoRouterState state,
@@ -69,9 +74,9 @@ abstract class AppRoutes {
       redirect: (context, state) =>
           Matrix.of(context).widget.clients.any((client) => client.isLogged())
           ? '/rooms'
-          : kDebugMode ? '/signup-preview' : '/home',
+          : enableSignupPreview ? '/signup-preview' : '/home',
     ),
-    if (kDebugMode)
+    if (enableSignupPreview)
       GoRoute(
         path: '/signup-preview',
         redirect: loggedInRedirect,
