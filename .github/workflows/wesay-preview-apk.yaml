@@ -7,6 +7,9 @@ on:
     branches: [codex/combined-apk]
     paths:
       - '.github/workflows/wesay-preview-apk.yaml'
+      - 'android/**'
+      - 'lib/**'
+      - 'test/**'
   workflow_dispatch:
 
 permissions:
@@ -105,9 +108,9 @@ jobs:
           with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
               for file in sorted(out.iterdir()):
                   bundle.write(file, arcname=file.name)
+          print(f'Compressed download bytes: {archive.stat().st_size}')
           if archive.stat().st_size >= 80000000:
               raise SystemExit('Compressed download exceeds conservative free-storage upload cap')
-          print(f'Compressed download bytes: {archive.stat().st_size}')
           print(package)
           print(abi)
           print(signature)
